@@ -29,6 +29,7 @@ INSTALLED_APPS = [
     'phonenumber_field',
     'core',
     'organization',
+    'health_support',
 ]
 
 MIDDLEWARE = [
@@ -114,7 +115,7 @@ STATIC_URL = 'static/'
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
-AUTH_USER_MODEL = 'accounts.User'
+AUTH_USER_MODEL = 'organization.User'
 
 
 # Simple JWT settings
