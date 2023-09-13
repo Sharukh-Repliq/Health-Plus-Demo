@@ -16,4 +16,9 @@ urlpatterns = [
     # JWT api urls
     path('api/token/', TokenObtainPairView.as_view(), name='token_obtain_pair'),
     path('api/token/refresh/', TokenRefreshView.as_view(), name='token_refresh'),
+
+    # Django Silk
+    path('silk', include('silk.urls', namespace='silk')),
 ]
+
+# urlpatterns += patterns('', url(r'^silk', include('silk.urls', namespace='silk')))
