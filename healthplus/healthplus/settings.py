@@ -131,6 +131,8 @@ SIMPLE_JWT = {
     'SLIDING_TOKEN_LIFETIME_LATE_REFRESH': timedelta(days=21),  # Late refresh token sliding window
 }
 
+APPEND_SLASH = False
+
 REST_FRAMEWORK ={ 
     'DEFAULT_SCHEMA_CLASS': 'drf_spectacular.openapi.AutoSchema',
     

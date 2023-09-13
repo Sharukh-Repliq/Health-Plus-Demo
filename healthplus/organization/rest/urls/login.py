@@ -5,7 +5,7 @@ from ..views.login import UserLoginView
 
 urlpatterns = [
     path(
-        r"",
+        r"/login",
         UserLoginView.as_view(),
         name="user-login",
     ),
