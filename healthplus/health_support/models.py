@@ -37,6 +37,7 @@ class Medicine(CustomBaseModel):
     def __str__(self):
         return f"ID: {self.id}, Name: {self.name}"
 
+
 class LabTest(CustomBaseModel):
     "Model for class test"
     name = models.CharField(max_length=255)
@@ -48,7 +49,9 @@ class LabTest(CustomBaseModel):
 
 class Appointment(CustomBaseModel):
     "Model for labtest booking"
-    patient = models.ForeignKey(Patient, on_delete=models.SET_NULL, null=True)
+    patient = models.ForeignKey(
+        Patient, on_delete=models.SET_NULL, null=True, blank=True
+    )
     doctor = models.ForeignKey(Doctor, on_delete=models.SET_NULL, null=True, blank=True)
     organization = models.ForeignKey(Organization, on_delete=models.CASCADE)
     schedule_start = models.DateTimeField()
@@ -57,6 +60,7 @@ class Appointment(CustomBaseModel):
     type = models.CharField(max_length=20, choices=AppointmentType.choices)
     status = models.CharField(max_length=20, choices=AppointmentStatus.choices)
     address = models.TextField()
+    slug = models.SlugField(null=True, blank=True)
 
 
 class LabTestAppointmentConnector(CustomBaseModel):
