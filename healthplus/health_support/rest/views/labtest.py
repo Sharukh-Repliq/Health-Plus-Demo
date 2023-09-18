@@ -1,20 +1,19 @@
-# from django.shortcuts import get_object_or_404
+from django.shortcuts import get_object_or_404
 
-# from rest_framework import generics
+from rest_framework import generics
 
-# from ..serializers.appointment import CreateAppointmentWithDoctorSerializer
-# from organization.rest.permissions import IsOrganizationMember
-
-
-# class LabTestView(generics.ListCreateAPIView):
-#     """Create an appointment for logged in Patient with an Doctor"""
-
-#     permission_classes = [IsOrganizationMember]
-#     serializer_class = CreateAppointmentWithDoctorSerializer
+from health_support.models import LabTest
+from ..serializers.labtest import LabTestSerializer
+from organization.rest.permissions import IsOrganizationMember
 
 
-# class LabTestList(generics.RetrieveUpdateDestroyAPIView):
-#     """Create an appointment for logged in Patient with an Doctor"""
+class LabTestView(generics.ListAPIView):
+    """Logged In Patient can view the labtest he has enlisted"""
 
-#     permission_classes = [IsOrganizationMember]
-#     serializer_class = CreateAppointmentWithDoctorSerializer
+    queryset = LabTest.objects.filter()
+    permission_classes = []
+    serializer_class = LabTestSerializer
+
+    def get_queryset(self):
+        user = self.request.user
+        return self.queryset.filter(user)

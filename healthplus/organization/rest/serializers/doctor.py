@@ -1,6 +1,7 @@
 from rest_framework import serializers
 from organization.models import Doctor
 from .user import UserSerializer
+
 from organization.helper.user import UserService
 
 from phonenumber_field.serializerfields import PhoneNumberField
@@ -24,7 +25,7 @@ class DoctorSerializer(serializers.ModelSerializer):
 
 
 class DoctorSerializer(serializers.Serializer):
-    uid = serializers.ReadOnlyField()
+    uid = serializers.UUIDField()
     slug = serializers.CharField()
     created_at = serializers.DateTimeField()
     updated_at = serializers.DateTimeField()
@@ -46,7 +47,11 @@ class DoctorSerializer(serializers.Serializer):
             email=validated_data.get("email", ""),
         )
 
-        # Set that user as an patient
-        patient = Patient.objects.create(user=user.id)
+        # Set that user as an doctor
+        patient = Doctor.objects.create(user=user.id)
+
+        # Create an organization user instance and set the doctor as that organization user.
+
+        # organization_user =
 
         return validated_data

@@ -48,10 +48,8 @@ class OrganizationUserSerializer(serializers.ModelSerializer):
             """Create an User then assign that user as a Patient"""
             user_helper = UserService()
 
-            # request = self.context.get("request")
-            # user = request.user
-
-            organization = Organization.objects.filter(user).first()
+            organization_user = OrganizationUser.objects.filter(user).first()
+            organization = organization_user.organization
 
             # Create User
             user = user_helper.create_user(
