@@ -1,3 +1,33 @@
-from django.test import TestCase
+from django.contrib.auth import get_user_model
 
-# Create your tests here.
+from rest_framework.test import APIClient, APITestCase
+from rest_framework import status
+
+
+""" Placeholder code for now. """
+
+
+class BaseAPITestCase(APITestCase):
+    def setUp(self):
+        self.client = APIClient()
+        self.user = get_user_model().objects.create_user(
+            "user@example.com", "new1234password"
+        )
+
+        # onboarding new organization
+        self.onboarding_response = self.client.post(
+            urlhelpers.organization_onboarding_url(),
+            payloads.organization_onboard_payload(),
+        )
+
+        self.assertEqual(self.onboarding_response.status_code, status.HTTP_201_CREATED)
+
+        # authenticating initiator as auth user
+        self.auth_user = get_user_model().objects.get(
+            email=payloads.organization_onboard_payload()["email"]
+        )
+
+        self.client.force_authenticate(self.auth_user)
+
+    def tearDown(self):
+        self.client.logout()

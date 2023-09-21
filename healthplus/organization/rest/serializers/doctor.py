@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from organization.models import Doctor
+from organization.models import Doctor, Organization, OrganizationUser
 from .user import UserSerializer
 
 from organization.helper.user import UserService
@@ -24,12 +24,21 @@ class DoctorSerializer(serializers.ModelSerializer):
         ]
 
 
-class DoctorSerializer(serializers.Serializer):
-    uid = serializers.UUIDField()
-    slug = serializers.CharField()
-    created_at = serializers.DateTimeField()
-    updated_at = serializers.DateTimeField()
-    user = UserSerializer()
+class DoctorRegistrationSerializer(serializers.Serializer):
+    """Individual Registration for doctors by providing organization UID"""
+
+    uid = serializers.UUIDField(read_only=True, source="patient.uid")
+    slug = serializers.SlugField(read_only=True, source="patient.slug")
+    name = serializers.CharField(max_length=255)
+    phone_number = PhoneNumberField()
+    email = serializers.EmailField()
+    password = serializers.CharField(
+        min_length=5,
+        max_length=100,
+        write_only=True,
+    )
+    address = serializers.CharField(max_length=50, allow_blank=True)
+    user_type = serializers.CharField(max_length=50, read_only=True)
     designation = serializers.CharField(max_length=255)
     specialty = serializers.CharField(max_length=50)
     expertise = serializers.CharField(max_length=50)
@@ -37,6 +46,19 @@ class DoctorSerializer(serializers.Serializer):
     def create(self, validated_data):
         """Create an User then assign that user as a Patient"""
         user_helper = UserService()
+
+        request = self.context.get("request")
+
+        # Extract the organization_uid from the URL's query parameters
+        org_uid = request.query_params.get("uid")
+
+        # Fetch the LabTest instance based on the UID
+        try:
+            organization = Organization.objects.get(uid=org_uid)
+        except Organization.DoesNotExist:
+            raise serializers.ValidationError(
+                "Organization with the specified UID does not exist."
+            )
 
         # Create User
         user = user_helper.create_user(
@@ -48,10 +70,11 @@ class DoctorSerializer(serializers.Serializer):
         )
 
         # Set that user as an doctor
-        patient = Doctor.objects.create(user=user.id)
+        Doctor.objects.create(user=user.id, **validated_data)
 
-        # Create an organization user instance and set the doctor as that organization user.
-
-        # organization_user =
+        # Set the doctor as a organization User
+        OrganizationUser.objects.create(
+            user=user, organization=organization, role="Doctor"
+        )
 
         return validated_data

@@ -1,6 +1,6 @@
 from django.urls import path
 
-from ..views.doctor import DoctorList, DoctorDetail
+from ..views.doctor import DoctorList, DoctorDetail, DoctorRegistration
 
 
 urlpatterns = [
@@ -13,5 +13,10 @@ urlpatterns = [
         r"/we/doctors/<uuid:uid>",
         DoctorDetail.as_view(),
         name="doctor-detail",
-    )
+    ),
+    path(
+        r"/me/doctor/organizations/<uuid:uid>/register",
+        DoctorRegistration.as_view(),
+        name="doctor-registration",
+    ),
 ]

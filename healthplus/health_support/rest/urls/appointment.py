@@ -1,6 +1,9 @@
 from django.urls import path
 
-from ..views.appointment import CreateAppointmentWithDoctorView
+from ..views.appointment import (
+    CreateAppointmentForLabTestView,
+    CreateAppointmentWithDoctorView,
+)
 
 
 urlpatterns = [
@@ -9,10 +12,9 @@ urlpatterns = [
         CreateAppointmentWithDoctorView.as_view(),
         name="create-appointment-with-doctor",
     ),
+    path(
+        r"appointment/labtests/<uuid:uid>",
+        CreateAppointmentForLabTestView.as_view(),
+        name="create-appointment-w",
+    ),
 ]
-
-# path(
-#     r"/we/doctors/<uuid:uid>",
-#     DoctorDetail.as_view(),
-#     name="doctor-detail",
-# )

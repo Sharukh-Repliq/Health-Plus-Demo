@@ -5,6 +5,11 @@ Django settings for healthplus project.
 from pathlib import Path
 from datetime import timedelta
 
+from dotenv import load_dotenv
+import os
+
+load_dotenv()
+
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
@@ -35,7 +40,10 @@ INSTALLED_APPS = [
     "order_management",
     "health_support",
     "drf_spectacular",
+    "django_extensions",
+    "schema_graph",
     "silk",
+    "axes",
 ]
 
 MIDDLEWARE = [
@@ -47,6 +55,7 @@ MIDDLEWARE = [
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
     "silk.middleware.SilkyMiddleware",
+    "axes.middleware.AxesMiddleware",
 ]
 
 SILKY_PYTHON_PROFILER = True
@@ -156,3 +165,16 @@ REST_FRAMEWORK = {
     "DEFAULT_FILTER_BACKENDS": ["rest_framework.filters.SearchFilter"],
     "SEARCH_PARAM": "q",  # Customize the search parameter if needed
 }
+
+AUTHENTICATION_BACKENDS = [
+    "axes.backends.AxesStandaloneBackend",
+]
+
+AXES_FAILURE_LIMIT = 10
+
+# CELERY
+"""
+CELERY_BACKEND = os.environ["CELERY_BACKEND"]
+CELERY_BROKER_URL = os.environ["CELERY_BROKER_URL"]
+CELERY_RESULT_BACKEND = os.environ["CELERY_RESULT_BACKEND"]
+"""

@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from health_support.models import Appointment
+from health_support.models import Appointment, LabTest, LabTestAppointmentConnector
 from organization.models import Organization, Doctor
 from organization.rest.serializers.we import OrganizationSerializer
 
@@ -45,4 +45,38 @@ class CreateAppointmentWithDoctorSerializer(serializers.Serializer):
 class CreateAppointmentForLabTestSerializer(serializers.Serializer):
     """Patient can create an appointment for lab test"""
 
-    pass
+    uid = serializers.CharField()
+    slug = serializers.CharField()
+    patient = serializers.UUIDField()
+    organization = OrganizationSerializer()
+    schedule_start = serializers.DateTimeField()
+    schedule_end = serializers.DateTimeField()
+    location = serializers.CharField()
+    type = serializers.CharField()
+    status = serializers.CharField()
+    address = serializers.CharField()
+
+    def create(self, validated_data):
+        request = self.context.get("request")
+        user = request.user
+
+        # Extract the labtest_uid from the URL's query parameters
+        labtest_uid = request.query_params.get("uid")
+
+        # Fetch the LabTest instance based on the UID
+        try:
+            labtest = LabTest.objects.get(uid=labtest_uid)
+        except LabTest.DoesNotExist:
+            raise serializers.ValidationError(
+                "LabTest with the specified UID does not exist."
+            )
+
+        # Create the Appointment object with doctor, patient, and validated data
+        appointment = Appointment.objects.create(patient=user, **validated_data)
+
+        # Establishing a relation with appointment and labtest
+        LabTestAppointmentConnector.objects.create(
+            appointment=appointment, labtest=labtest
+        )
+
+        return appointment

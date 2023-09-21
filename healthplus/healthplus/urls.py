@@ -2,9 +2,10 @@ from django.contrib import admin
 from django.urls import path, include
 from rest_framework_simplejwt.views import TokenObtainPairView, TokenRefreshView
 from drf_spectacular.views import SpectacularAPIView, SpectacularSwaggerView
+from schema_graph.views import Schema
 
 urlpatterns = [
-    path("admin", admin.site.urls),
+    path("staff/", admin.site.urls),
     # organization app
     path("api", include("organization.rest.urls")),
     # health_support app
@@ -18,6 +19,8 @@ urlpatterns = [
         SpectacularSwaggerView.as_view(url_name="schema"),
         name="swagger-ui",
     ),
+    # For generating model graph
+    path("schema", Schema.as_view()),
     # JWT api urls
     path("api/token/", TokenObtainPairView.as_view(), name="token_obtain_pair"),
     path("api/token/refresh/", TokenRefreshView.as_view(), name="token_refresh"),
