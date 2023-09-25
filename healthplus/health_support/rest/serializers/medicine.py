@@ -3,6 +3,7 @@ from health_support.models import Medicine, MedicineCategory
 
 
 class MedicineCategorySerializer(serializers.ModelSerializer):
+    
     class Meta:
         model = MedicineCategory
         fields = (

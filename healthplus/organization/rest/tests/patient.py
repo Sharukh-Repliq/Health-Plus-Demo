@@ -19,6 +19,7 @@ class PatientRegistrationTests(APITestCase):
 
         self.org = self.client.post("api_url", self.org_payload)
 
-    def create_org(self):
+    def test_create_organization(self):
         response = self.org
         self.assertEqual(response.org.data["name"], response.org_payload()["name"])
+        self.assertEqual(response.org.data['email'], response.org_payload()['email'])

@@ -62,6 +62,23 @@ class Appointment(CustomBaseModel):
     address = models.TextField()
     slug = models.SlugField(null=True, blank=True)
 
+    # For follow-up appointments
+    parent = models.ForeignKey(
+        "self",
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        related_name="appointment_followup",
+    )
+
+    def save(self, *args, **kwargs):
+        if self.type == AppointmentType.FollowUp:
+            if not self.parent:
+                raise ValueError(
+                    "Follow-up appointments must have a parent appointment."
+                )
+        super().save(*args, **kwargs)
+
 
 class LabTestAppointmentConnector(CustomBaseModel):
     appointment = models.ForeignKey(Appointment, on_delete=models.CASCADE)
